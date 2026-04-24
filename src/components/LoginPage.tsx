@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -16,16 +16,15 @@ interface User {
   password?: string;
 }
 
-// MODIFICATION 1: Updated onLogin prop to accept id and password
+// Updated prop: login now uses email instead of id
 interface LoginPageProps {
-  onLogin: (credentials: { id: string; password: string }) => void;
+  onLogin: (credentials: { email: string; password: string }) => void;
   onSignup: (userData: User) => void;
 }
 
 export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
-  // MODIFICATION 2: Login state now tracks both id and password
   const [loginData, setLoginData] = useState({
-    id: '',
+    email: '',
     password: '',
   });
 
@@ -38,7 +37,6 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
     role: 'student' as UserRole,
   });
 
-  // MODIFICATION 3: handleLogin now sends an object with id and password
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     onLogin(loginData);
@@ -85,7 +83,7 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
 
-          {/* --- LOGIN FORM (MODIFIED) --- */}
+          {/* --- LOGIN FORM --- */}
           <TabsContent value="login">
             <Card className="shadow-academic-lg border-0">
               <CardHeader className="text-center pb-4">
@@ -95,18 +93,17 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-id">User ID</Label>
+                    <Label htmlFor="login-email">Email</Label>
                     <Input
-                      id="login-id"
-                      type="text"
-                      placeholder="e.g., S001"
-                      value={loginData.id}
-                      onChange={(e) => setLoginData({ ...loginData, id: e.target.value })}
+                      id="login-email"
+                      type="email"
+                      placeholder="e.g., nava@example.com"
+                      value={loginData.email}
+                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       className="h-12 rounded-xl border-[#D3AF85]/30 focus:border-[#F4B315]"
                       required
                     />
                   </div>
-                  {/* MODIFICATION 4: Added Password Input Field */}
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
                     <Input
@@ -127,7 +124,7 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
             </Card>
           </TabsContent>
           
-          {/* --- SIGNUP FORM (No functional changes needed) --- */}
+          {/* --- SIGNUP FORM --- */}
           <TabsContent value="signup">
             <Card className="shadow-academic-lg border-0">
               <CardHeader className="text-center pb-4">
@@ -136,7 +133,6 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
-                  {/* Fields for name, id, email, role, and passwords */}
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
                     <Input
@@ -146,14 +142,6 @@ export function LoginPage({ onLogin, onSignup }: LoginPageProps) {
                     />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="signup-id">User ID</Label>
-                    <Input
-                      id="signup-id" type="text" placeholder="Create a unique User ID" value={signupData.id}
-                      onChange={(e) => setSignupData({ ...signupData, id: e.target.value })}
-                      className="h-12 rounded-xl border-[#D3AF85]/30 focus:border-[#F4B315]" required
-                    />
-                  </div>
-                  <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email" type="email" placeholder="Enter your email" value={signupData.email}

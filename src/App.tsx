@@ -1,65 +1,55 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginPage } from './components/LoginPage';
 import { StudentDashboard } from './components/StudentDashboard';
 import { TeacherDashboard } from './components/TeacherDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 
-// --- INITIAL USER DATA ---
-const initialUsers = [
-  { id: 'S001', name: 'Nava', role: 'student', email: 'nava@example.com', password: 'password123' },
-  { id: 'S002', name: 'Aryan', role: 'student', email: 'aryan@example.com', password: 'password123' },
-  { id: 'S001', name: 'Vishnu', role: 'student', email: 'vishnu@example.com', password: 'password123' },
-  { id: 'S001', name: 'Niloofer', role: 'student', email: 'niloofer@example.com', password: 'password123' },
-  { id: 'S001', name: 'Rashid', role: 'student', email: 'rashid@example.com', password: 'password123' },
-  { id: 'S001', name: 'George', role: 'student', email: 'george@example.com', password: 'password123' },
-  { id: 'T001', name: 'Nilakshi', role: 'teacher', email: 'nilakshi@example.com', password: 'password456' },
-  { id: 'A001', name: 'Nitha', role: 'admin', email: 'nitha@example.com', password: 'password789' },
-];
-// --- END INITIAL USER DATA ---
-
 type UserRole = 'student' | 'teacher' | 'admin';
 
-interface User {
-  id: string;
-  name: string;
-  role: UserRole;
-  email: string;
-  avatar?: string;
-  password?: string;
-}
-
-export default function App() {
-  // MODIFICATION 1: The list of users is now managed by React state.
-  const [registeredUsers, setRegisteredUsers] = useState(initialUsers);
-  
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+// ─── Inner app — uses AuthContext ─────────────────────────────────────────────
+function AppInner() {
+  const { currentUser, isLoading, login, logout, signup } = useAuth();
   const [currentPage, setCurrentPage] = useState<string>('home');
 
-  const handleLogin = ({ id, password }: { id: string; password: string }) => {
-    const userFound = registeredUsers.find(user => user.id === id);
-
-    if (userFound && userFound.password === password) {
-      const { password, ...userToSet } = userFound;
-      setCurrentUser(userToSet);
+  const handleLogin = async ({ email, password }: { email: string; password: string }) => {
+    try {
+      await login({ email, password });
       setCurrentPage('home');
-    } else {
-      alert('Login failed: Invalid User ID or Password.');
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Login failed: Invalid email or password.';
+      alert(message);
     }
   };
 
-  // MODIFICATION 2: Update state correctly instead of using .push()
-  const handleSignup = (newUserData: User) => {
-    console.log('New user signed up:', newUserData);
-    
-    // This is the immutable way to add an item to an array in state.
-    // It creates a new array with all the old users plus the new one.
-    setRegisteredUsers(currentUsers => [...currentUsers, newUserData]);
-    
-    alert(`User ${newUserData.name} with ID ${newUserData.id} signed up!`);
+  const handleSignup = async (newUserData: {
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
+    password?: string;
+  }) => {
+    try {
+      await signup({
+        name: newUserData.name,
+        email: newUserData.email,
+        password: newUserData.password || '',
+        role: newUserData.role,
+      });
+      alert(`Welcome, ${newUserData.name}! Your account has been created.`);
+      setCurrentPage('home');
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Registration failed. Please try again.';
+      alert(message);
+    }
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
+    logout();
     setCurrentPage('home');
   };
 
@@ -67,16 +57,35 @@ export default function App() {
     setCurrentPage(page);
   };
 
+  // Show nothing while session is being restored
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#F4B315] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#423738]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     return <LoginPage onLogin={handleLogin} onSignup={handleSignup} />;
   }
+
+  const userForDashboard = {
+    id: currentUser._id,
+    name: currentUser.name,
+    role: currentUser.role as UserRole,
+    email: currentUser.email,
+  };
 
   const renderDashboard = () => {
     switch (currentUser.role) {
       case 'student':
         return (
           <StudentDashboard
-            user={currentUser}
+            user={userForDashboard}
             currentPage={currentPage}
             onPageChange={handlePageChange}
             onLogout={handleLogout}
@@ -85,7 +94,7 @@ export default function App() {
       case 'teacher':
         return (
           <TeacherDashboard
-            user={currentUser}
+            user={userForDashboard}
             currentPage={currentPage}
             onPageChange={handlePageChange}
             onLogout={handleLogout}
@@ -94,7 +103,7 @@ export default function App() {
       case 'admin':
         return (
           <AdminDashboard
-            user={currentUser}
+            user={userForDashboard}
             currentPage={currentPage}
             onPageChange={handlePageChange}
             onLogout={handleLogout}
@@ -106,4 +115,13 @@ export default function App() {
   };
 
   return <div className="min-h-screen bg-background">{renderDashboard()}</div>;
+}
+
+// ─── Root — wraps with AuthProvider ──────────────────────────────────────────
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
+    </AuthProvider>
+  );
 }

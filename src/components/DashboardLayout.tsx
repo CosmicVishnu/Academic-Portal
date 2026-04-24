@@ -1,4 +1,4 @@
-import React from 'react';
+import { type LucideIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
@@ -13,7 +13,7 @@ interface User {
 interface NavigationItem {
   id: string;
   label: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
 }
 
 interface DashboardLayoutProps {

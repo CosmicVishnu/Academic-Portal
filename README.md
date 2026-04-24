@@ -1,128 +1,249 @@
-# Academic Portal
+# Academic Portal — Full-Stack Application
 
-> **KTU Third Semester — Object Oriented Programming Project (Group 8)**  
-> A modern, responsive academic management portal built with React, TypeScript, and shadcn/ui.
-
----
-
-## Overview
-
-Academic Portal is a frontend web application designed to replicate the core experience of a university academic management system. It provides students and faculty with a clean, accessible interface for managing courses, grades, attendance, and academic records — built with a component-driven architecture using industry-standard tooling.
-
-This project was developed as part of the **KTU (APJ Abdul Kalam Technological University) Third Semester OOP curriculum**, applying object-oriented design principles in a modern frontend context through TypeScript's class and interface system.
+A full-stack academic management system built with **React + Vite + TypeScript** (frontend) and **Node.js + Express + MongoDB** (backend), featuring role-based dashboards for Students, Teachers, and Admins.
 
 ---
 
-## Features
+## 🚀 Features
 
-- 📋 **Dashboard** — At-a-glance view of academic status, attendance, and upcoming events
-- 📚 **Course Management** — Browse enrolled subjects with details and schedules
-- 📊 **Grades & Results** — View semester-wise marks and CGPA tracking with charts
-- 🗓️ **Attendance Tracker** — Monitor attendance percentage per subject with visual indicators
-- 👤 **Student Profile** — Manage personal and academic information
-- 🌙 **Dark / Light Mode** — Theme toggle powered by `next-themes`
-- ♿ **Accessible UI** — Built entirely on Radix UI primitives for full keyboard and screen reader support
+### Student Dashboard
+- View personal attendance percentages per subject (live from DB)
+- Browse notices and announcements (live from DB)
+- Personalized home with attendance warnings for subjects below 75%
+- View grades, timetable, and academic profile
+
+### Teacher Dashboard
+- Mark attendance for classes with real student data (live from DB)
+- Post/manage notices (publish, draft, delete — live from DB)
+- View class performance metrics
+
+### Admin Dashboard
+- Manage all users (students, teachers, admins — live from DB)
+- View system health and department statistics
+- User activation/deactivation controls
+
+### Authentication
+- Email + password login with JWT
+- Role-based access control (student / teacher / admin)
+- Session persistence via localStorage
+- Auto-logout on token expiry
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | React 18 |
-| Language | TypeScript |
-| Build Tool | Vite |
-| UI Components | shadcn/ui (Radix UI + Tailwind CSS) |
-| Charts | Recharts |
-| Forms | React Hook Form |
-| Icons | Lucide React |
-| Theming | next-themes |
-| Notifications | Sonner |
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS, Radix UI |
+| Backend | Node.js, Express, TypeScript |
+| Database | MongoDB with Mongoose ODM |
+| Auth | JWT (jsonwebtoken), bcryptjs |
+| HTTP Client | Axios (frontend) |
 
 ---
 
-## Project Structure
+## 📋 Prerequisites
+
+- **Node.js** v18 or higher
+- **MongoDB** running locally on `mongodb://localhost:27017`
+  - [Download MongoDB Community](https://www.mongodb.com/try/download/community)
+  - Or use MongoDB Atlas (update `MONGO_URI` in `backend/.env`)
+
+---
+
+## ⚙️ Setup & Running
+
+### 1. Clone / navigate to the project
+```bash
+cd "Academic Portal Final/Academic-Portal"
+```
+
+### 2. Install frontend dependencies
+```bash
+npm install
+```
+
+### 3. Install backend dependencies
+```bash
+cd backend
+npm install
+cd ..
+```
+
+### 4. Configure backend environment
+The file `backend/.env` is already pre-configured for local development:
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/academic_portal
+JWT_SECRET=academic_portal_super_secret_key_2024_change_in_production
+JWT_EXPIRES_IN=7d
+```
+> ⚠️ Change `JWT_SECRET` to a strong random string before deploying to production.
+
+### 5. Seed the database
+```bash
+cd backend
+npm run seed
+cd ..
+```
+This creates all users, courses, attendance records, grades, and announcements.
+
+### 6. Start the backend
+```bash
+cd backend
+npm run dev
+```
+Server starts at **http://localhost:5000**
+
+### 7. Start the frontend (in a new terminal)
+```bash
+npm run dev
+```
+App opens at **http://localhost:3000**
+
+---
+
+## 🔐 Default Test Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| Student | `nava@example.com` | `password123` |
+| Teacher | `nilakshi@example.com` | `password456` |
+| Admin | `nitha@example.com` | `password789` |
+
+Additional students:
+- `aryan@example.com` / `password123`
+- `vishnu@example.com` / `password123`
+
+Additional teachers:
+- `minu@example.com` / `password456`
+- `rekha@example.com` / `password456`
+
+---
+
+## 📁 Project Structure
 
 ```
 Academic-Portal/
-├── src/
-│   ├── components/        # Reusable UI components (shadcn/ui based)
-│   ├── pages/             # Route-level page components
-│   ├── hooks/             # Custom React hooks
-│   ├── lib/               # Utility functions
-│   └── main.tsx           # App entry point
-├── index.html
-├── vite.config.ts
-└── package.json
+├── src/                          # Frontend (React + Vite + TypeScript)
+│   ├── api/                      # ← NEW: API layer (Axios)
+│   │   ├── client.ts             # Axios instance + interceptors
+│   │   ├── auth.ts               # Auth API calls
+│   │   ├── attendance.ts         # Attendance API calls
+│   │   ├── announcements.ts      # Announcements/notices API calls
+│   │   ├── students.ts           # Students API calls
+│   │   ├── faculty.ts            # Faculty/users API calls
+│   │   ├── grades.ts             # Grades API calls
+│   │   └── courses.ts            # Courses API calls
+│   ├── context/
+│   │   └── AuthContext.tsx       # ← NEW: JWT auth context + session restore
+│   ├── components/
+│   │   ├── LoginPage.tsx         # ← UPDATED: uses email instead of ID
+│   │   ├── student/
+│   │   │   ├── StudentHome.tsx   # ← UPDATED: real API data
+│   │   │   ├── StudentAttendance.tsx # ← UPDATED: real API data
+│   │   │   └── StudentNotices.tsx    # ← UPDATED: real API data
+│   │   ├── teacher/
+│   │   │   ├── PostNotices.tsx   # ← UPDATED: real API data
+│   │   │   └── MarkAttendance.tsx    # ← UPDATED: real API data
+│   │   └── admin/
+│   │       └── EditUsers.tsx     # ← UPDATED: real API data
+│   └── App.tsx                   # ← UPDATED: uses AuthContext
+│
+├── backend/                      # ← NEW: Express + MongoDB backend
+│   ├── src/
+│   │   ├── models/               # Mongoose schemas (OOP class hierarchy)
+│   │   │   ├── User.ts           # Base User class + discriminator parent
+│   │   │   ├── Student.ts        # Extends User (rollNumber, semester)
+│   │   │   ├── Faculty.ts        # Extends User (employeeId, courses)
+│   │   │   ├── Course.ts         # Course model
+│   │   │   ├── Grade.ts          # Grade model (auto-calculates letter grade)
+│   │   │   ├── Attendance.ts     # Attendance model
+│   │   │   └── Announcement.ts   # Announcements/notices model
+│   │   ├── middleware/
+│   │   │   ├── auth.ts           # JWT verifyToken middleware
+│   │   │   └── roles.ts          # requireRole() RBAC middleware
+│   │   ├── routes/
+│   │   │   ├── auth.ts           # POST /login, POST /register, GET /me
+│   │   │   ├── students.ts       # CRUD for students
+│   │   │   ├── faculty.ts        # CRUD for faculty + all-users
+│   │   │   ├── courses.ts        # CRUD for courses
+│   │   │   ├── grades.ts         # GET/POST grades
+│   │   │   ├── attendance.ts     # GET/POST attendance
+│   │   │   └── announcements.ts  # CRUD for announcements
+│   │   ├── server.ts             # Express app entry point
+│   │   └── seed.ts               # Database seed script
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── .env
+│
+├── vite.config.ts                # ← UPDATED: proxy /api → localhost:5000
+└── README.md
 ```
 
 ---
 
-## Getting Started
+## 🔗 API Endpoints
 
-### Prerequisites
+### Auth
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/api/auth/login` | Public | Login with email + password |
+| POST | `/api/auth/register` | Public | Register new user |
+| GET | `/api/auth/me` | Auth | Get current user from token |
 
-- Node.js v18+
-- npm or yarn
+### Students
+| Method | Endpoint | Access |
+|---|---|---|
+| GET | `/api/students` | Admin, Teacher |
+| GET | `/api/students/:id` | Self, Admin, Teacher |
+| PUT | `/api/students/:id` | Admin |
+| DELETE | `/api/students/:id` | Admin |
 
-### Installation
+### Attendance
+| Method | Endpoint | Access |
+|---|---|---|
+| GET | `/api/attendance/student/:id` | Self, Teacher, Admin |
+| GET | `/api/attendance/course/:courseId` | Teacher, Admin |
+| POST | `/api/attendance` | Teacher, Admin |
 
-```bash
-# Clone the repository
-git clone https://github.com/CosmicVishnu/Academic-Portal.git
-cd Academic-Portal
+### Announcements
+| Method | Endpoint | Access |
+|---|---|---|
+| GET | `/api/announcements` | All authenticated |
+| GET | `/api/announcements/all` | Teacher, Admin |
+| POST | `/api/announcements` | Teacher, Admin |
+| PUT | `/api/announcements/:id` | Author, Admin |
+| DELETE | `/api/announcements/:id` | Author, Admin |
 
-# Install dependencies
-npm i
+---
 
-# Start the development server
-npm run dev
+## 🧠 OOP Model Hierarchy
+
+```
+UserClass (base)
+├── StudentClass extends UserClass
+│   └── rollNumber, semester, getSemesterLabel()
+└── FacultyClass extends UserClass
+    └── employeeId, courses[], addCourse(), removeCourse()
+
+CourseClass         — id, name, code, facultyId, credits, getFullTitle()
+GradeClass          — studentId, courseId, marks, grade, calculateGrade(), isPassing()
+AttendanceClass     — studentId, courseId, date, status, isPresent(), calculatePercentage()
 ```
 
-The app will be available at `http://localhost:5173`.
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-Output will be in the `dist/` folder, ready for static hosting (Vercel, Netlify, GitHub Pages, etc.).
+MongoDB uses Mongoose **discriminators** for User/Student/Faculty — all stored in a single `users` collection with a `role` field discriminator key.
 
 ---
 
-## Design Principles
+## 👥 Team
 
-This project applies **OOP concepts** within a TypeScript + React context:
-
-- **Encapsulation** — Component state and logic are self-contained; UI components expose clean props interfaces
-- **Abstraction** — shadcn/ui components abstract complex Radix primitives into simple, reusable building blocks
-- **Modularity** — Each feature (grades, attendance, courses) is an independent module with its own components and data logic
-- **Type Safety** — TypeScript interfaces define the shape of all data models (Student, Course, Grade, Attendance) enforcing correctness at compile time
+Built with ❤️ by the Academic Portal Team.
 
 ---
 
-## Screenshots
+## ⚠️ Notes
 
-> _Add screenshots here once the app is running — a dashboard view, grades page, and mobile responsive view would showcase the project best._
-
----
-
-## Resume Description
-
-> Built a full-featured academic management portal using React 18, TypeScript, and shadcn/ui; implemented reusable, accessible components with Radix UI primitives, integrated Recharts for grade visualization, and applied OOP design principles through TypeScript interfaces and modular architecture.
-
----
-
-## Team
-
-Developed by **Group 8** — KTU B.Tech Computer Science, Semester 3.
-
----
-
-## Acknowledgements
-
-- [shadcn/ui](https://ui.shadcn.com/) — Component library
-- [Radix UI](https://www.radix-ui.com/) — Accessible primitives
-- [Vite](https://vitejs.dev/) — Build tooling
-- APJ Abdul Kalam Technological University — OOP curriculum
+- The frontend uses `role: 'teacher'` for display. The backend stores `role: 'faculty'` in MongoDB but maps it to `'teacher'` in JWT payloads for frontend compatibility.
+- Attendance percentage < 75% triggers a warning banner on the student dashboard.
+- All components include graceful fallbacks to hardcoded data when the backend is unavailable.

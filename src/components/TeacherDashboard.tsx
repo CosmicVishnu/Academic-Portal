@@ -1,10 +1,9 @@
-import React from 'react';
 import { DashboardLayout } from './DashboardLayout';
 import { TeacherHome } from './teacher/TeacherHome';
 import { MarkAttendance } from './teacher/MarkAttendance';
 import { PostNotices } from './teacher/PostNotices';
 import { EditTimetable } from './teacher/EditTimetable';
-import { Home, Users, FileText, Clock, BookOpen, User } from 'lucide-react';
+import { Home, Users, FileText, Clock, User } from 'lucide-react';
 
 interface User {
   name: string;

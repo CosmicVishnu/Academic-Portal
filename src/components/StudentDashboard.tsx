@@ -1,4 +1,3 @@
-import React from 'react';
 import { DashboardLayout } from './DashboardLayout';
 import { StudentHome } from './student/StudentHome';
 import { StudentAttendance } from './student/StudentAttendance';
@@ -6,7 +5,7 @@ import { StudentNotices } from './student/StudentNotices';
 import { StudentTimetable } from './student/StudentTimetable';
 import { StudentMaterials } from './student/StudentMaterials';
 import { StudentCalendar } from './student/StudentCalendar';
-import { Home, Calendar, FileText, Clock, BookOpen, CalendarDays, Users } from 'lucide-react';
+import { Home, Calendar, FileText, Clock, BookOpen, CalendarDays } from 'lucide-react';
 
 interface User {
   name: string;

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { 
   Calendar as CalendarIcon, 
@@ -111,7 +110,7 @@ export function StudentCalendar() {
     }
   ];
 
-  const attendanceData = {
+  const attendanceData: Record<string, { present: boolean; classes: number }> = {
     '2024-01-15': { present: true, classes: 5 },
     '2024-01-16': { present: true, classes: 4 },
     '2024-01-17': { present: false, classes: 5 },
@@ -239,13 +238,13 @@ export function StudentCalendar() {
                 onMonthChange={setCurrentMonth}
                 className="rounded-md border border-[#D3AF85]/20"
                 modifiers={{
-                  hasEvent: (date) => getEventsForDate(date).length > 0,
-                  hasAttendance: (date) => getAttendanceForDate(date) !== undefined,
-                  presentDay: (date) => {
+                  hasEvent: (date: Date) => getEventsForDate(date).length > 0,
+                  hasAttendance: (date: Date) => getAttendanceForDate(date) !== undefined,
+                  presentDay: (date: Date) => {
                     const attendance = getAttendanceForDate(date);
                     return attendance?.present === true;
                   },
-                  absentDay: (date) => {
+                  absentDay: (date: Date) => {
                     const attendance = getAttendanceForDate(date);
                     return attendance?.present === false;
                   }

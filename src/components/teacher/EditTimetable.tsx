@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { 
   Clock, 
   Edit, 
@@ -375,7 +374,7 @@ export function EditTimetable() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="class-select">Class</Label>
-                <Select value={classForm.class} onValueChange={(value) => setClassForm(prev => ({ ...prev, class: value }))}>
+                <Select value={classForm.class} onValueChange={(value: string) => setClassForm(prev => ({ ...prev, class: value }))}>
                   <SelectTrigger id="class-select" className="border-[#D3AF85]/30">
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
@@ -389,7 +388,7 @@ export function EditTimetable() {
 
               <div className="space-y-2">
                 <Label htmlFor="type-select">Type</Label>
-                <Select value={classForm.type} onValueChange={(value) => setClassForm(prev => ({ ...prev, type: value }))}>
+                <Select value={classForm.type} onValueChange={(value: string) => setClassForm(prev => ({ ...prev, type: value }))}>
                   <SelectTrigger id="type-select" className="border-[#D3AF85]/30">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -405,7 +404,7 @@ export function EditTimetable() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="room-select">Room</Label>
-                <Select value={classForm.room} onValueChange={(value) => setClassForm(prev => ({ ...prev, room: value }))}>
+                <Select value={classForm.room} onValueChange={(value: string) => setClassForm(prev => ({ ...prev, room: value }))}>
                   <SelectTrigger id="room-select" className="border-[#D3AF85]/30">
                     <SelectValue placeholder="Select room" />
                   </SelectTrigger>
@@ -419,7 +418,7 @@ export function EditTimetable() {
 
               <div className="space-y-2">
                 <Label htmlFor="time-select">Time</Label>
-                <Select value={classForm.time} onValueChange={(value) => setClassForm(prev => ({ ...prev, time: value }))}>
+                <Select value={classForm.time} onValueChange={(value: string) => setClassForm(prev => ({ ...prev, time: value }))}>
                   <SelectTrigger id="time-select" className="border-[#D3AF85]/30">
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
