@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// In production (Vercel), VITE_API_URL points to the Railway backend.
+// In local dev, Vite's proxy forwards /api → localhost:5000.
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

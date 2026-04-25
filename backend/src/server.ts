@@ -21,7 +21,19 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/academic_p
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:4173'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    const allowed = [
+      /^http:\/\/localhost:\d+$/,           // any localhost port
+      /^https:\/\/.*\.vercel\.app$/,        // any Vercel deployment
+    ];
+    if (allowed.some((pattern) => pattern.test(origin))) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
